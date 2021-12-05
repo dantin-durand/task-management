@@ -17,26 +17,31 @@ class LogoutTest extends TestCase
             'password' => $this->faker->password(8)
         ];
 
-        return ["userData" => $userData, "userCreate" => User::create([
+        $user = User::create([
             'name' => $userData['name'],
             'email' => $userData['email'],
             'password' => Hash::make($userData['password'])
-        ])];
+        ]);
+
+        $token = auth()->attempt([
+            'email' => $userData['email'],
+            'password' => $userData['password']
+        ]);
+
+        return ["token" => $token, "data" => $user];
     }
+
     public function test_invalid_token()
     {
         $response = $this->postJson('/api/logout');
         $response->assertStatus(401)->assertJsonStructure(['status', 'message']);
     }
+
     public function test_logout_with_success()
     {
         $user = $this->createUser();
 
-        $token = auth()->attempt([
-            'email' => $user['userData']['email'],
-            'password' => $user['userData']['password']
-        ]);
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $user['token'])
             ->postJson('/api/logout');
 
         $response->assertStatus(200)->assertJsonStructure(['status', 'message']);
