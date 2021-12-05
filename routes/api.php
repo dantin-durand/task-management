@@ -34,4 +34,5 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::post('tasks', [TaskController::class, 'store']);
+    Route::get('tasks', [TaskController::class, 'index']);
 });

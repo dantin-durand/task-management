@@ -52,6 +52,20 @@ class CreateTaskTest extends TestCase
         $response->assertStatus(422)->assertJsonStructure(['message', 'errors']);
     }
 
+    public function test_invalid_input()
+    {
+        $user = $this->createUser();
+
+        $task = [
+            'body' => true,
+        ];
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $user['token'])
+            ->postJson('/api/tasks');
+
+        $response->assertStatus(422)->assertJsonStructure(['message', 'errors']);
+    }
+
     public function test_create_task()
     {
         $user = $this->createUser();
