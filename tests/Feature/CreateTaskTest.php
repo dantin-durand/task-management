@@ -9,27 +9,6 @@ use Tests\TestCase;
 
 class CreateTaskTest extends TestCase
 {
-    public function createUser()
-    {
-        $userData = [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'password' => $this->faker->password(8)
-        ];
-
-        $user = User::create([
-            'name' => $userData['name'],
-            'email' => $userData['email'],
-            'password' => Hash::make($userData['password'])
-        ]);
-
-        $token = auth()->attempt([
-            'email' => $userData['email'],
-            'password' => $userData['password']
-        ]);
-
-        return ["token" => $token, "data" => $user];
-    }
 
     public function test_invalid_token()
     {

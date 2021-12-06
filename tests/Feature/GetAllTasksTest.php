@@ -9,42 +9,6 @@ use Tests\TestCase;
 
 class GetAllTasksTest extends TestCase
 {
-    public function createUser()
-    {
-        $userData = [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'password' => $this->faker->password(8)
-        ];
-
-        $user = User::create([
-            'name' => $userData['name'],
-            'email' => $userData['email'],
-            'password' => Hash::make($userData['password'])
-        ]);
-
-        $token = auth()->attempt([
-            'email' => $userData['email'],
-            'password' => $userData['password']
-        ]);
-
-        return ["token" => $token, "data" => $user];
-    }
-
-    public function createTask($user_id, $numberGen, $sleepForCheckDate = false)
-    {
-        for ($i = 0; $i < $numberGen; $i++) {
-            $taskData = [
-                'body' => $this->faker->sentence($nbWords = 20, $variableNbWords = true),
-                'user_id' => $user_id,
-                'completed' => true,
-            ];
-            Task::create($taskData);
-            if ($sleepForCheckDate) sleep(1);
-        }
-        return;
-    }
-
     public function test_invalid_token()
     {
         $response = $this->getJson('/api/tasks');

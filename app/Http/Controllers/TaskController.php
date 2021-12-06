@@ -53,7 +53,21 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['status' => 'error', 'message' => 'Element not found'], 404);
+        }
+
+        if ($task->user_id !== auth()->user()->id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "You do not have permission to access this content"
+            ], 403);
+        }
+
+
+        return response()->json(['status' => 'done', 'task' => $task], 200);
     }
 
     /**
@@ -65,7 +79,34 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['status' => 'error', 'message' => 'Element not found'], 404);
+        }
+
+        if ($task->user_id !== auth()->user()->id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "You do not have permission to access this content"
+            ], 403);
+        }
+
+        $request->validate([
+            'body' => 'string',
+            'completed' => 'boolean',
+        ]);
+
+        if ($request->has('body')) {
+            $task->body = $request->body;
+        }
+        if ($request->has('completed')) {
+            $task->completed = $request->completed;
+        }
+
+        $task->save();
+
+        return response()->json(['status' => 'done', 'task' => $task], 200);
     }
 
     /**
@@ -76,6 +117,21 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['status' => 'error', 'message' => 'Element not found'], 404);
+        }
+
+        if ($task->user_id !== auth()->user()->id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "You do not have permission to access this content"
+            ], 403);
+        }
+
+        $task->delete();
+
+        return response()->json(['status' => 'done', 'task' => $task], 200);
     }
 }
