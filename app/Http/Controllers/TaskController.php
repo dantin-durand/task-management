@@ -15,8 +15,14 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $orderByCompleted = $request->query('completed');
+
         if (isset($orderByCompleted)) {
-            $tasks = $request->user()->task()->where('completed', '=', true)->orderBy('created_at', 'desc')->get();
+            if ($orderByCompleted == "true") {
+
+                $tasks = $request->user()->task()->where('completed', '=', true)->orderBy('created_at', 'desc')->get();
+            } else {
+                $tasks = $request->user()->task()->where('completed', '=', false)->orderBy('created_at', 'desc')->get();
+            }
         } else {
             $tasks = $request->user()->task()->orderBy('created_at', 'desc')->get();
         }
@@ -39,7 +45,7 @@ class TaskController extends Controller
         $task = Task::create([
             'body' => $request->body,
             'user_id' => $request->user()->id,
-            'completed' => true,
+            'completed' => false,
         ]);
 
         return response()->json(['status' => 'done', 'task' => $task], 201);
